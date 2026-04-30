@@ -1,0 +1,1 @@
+JavaScript (JS) is a versatile programming language used to create interactive and dynamic features across the web, mobile, and desktop platforms. Originally designed for simple browser effects, it is now an essential "third layer" of web technology alongside HTML and CSS

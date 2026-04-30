@@ -17,13 +17,36 @@ if(!filePath){
     process.exit(1);
 }
 
-const fileName=path.basename(filePath);
+//const fileName=path.basename(filePath);
 const platform=os.platform();
-
+//usinf callbacks
+function analyzeFileCallback(){
+    fs.readFile(filePath,'utf-8',(err,data)=>{
+        if(err){
+            console.error(chalk.red('Error analyzing file:'), err);
+            return;
+        }
+        processData(data);
+    });
+}
+//using promises
+function analyzeFilePromise(){
+    fs.readFile(filePath,'utf-8')
+        .then(data=>processData(data))
+        .catch(err=>console.error(chalk.red('Error analyzing file:'), err));
+}
+//async-await
 async function analyzeFile(){
     try{
         const data=await fs.readFile(filePath,'utf-8');
 
+        processData(data);
+
+    }catch(err){
+        console.error(chalk.red('Error analyzing file:'), err);
+    }
+}
+function processData(data){
         const chars=data.length;
         const lines=data.split('\n').length;
         const wordsArray=data
@@ -52,9 +75,25 @@ async function analyzeFile(){
         console.log(chalk.magenta(`Top Words: ${topWords}`));
 
         emitter.emit('done');
-
-    }catch(err){
-        console.error(chalk.red('Error analyzing file:'), err);
-    }
 }
 analyzeFile();
+
+//processing multiple files
+
+async function analyzeMultipleFiles(){
+   const files=['text1.txt','text2.txt','text3.txt'];
+   try {
+       const results=await Promise.all(
+           files.map(file=> fs.readFile(file,'utf-8'))
+       )
+         results.forEach((data,index)=>{
+             console.log(chalk.blue(`\nAnalyzing: ${files[index]}`));
+             processData(data);
+         });
+
+   } catch (error) {
+       console.error(chalk.red('Error analyzing files:'), error);
+   }
+}
+
+analyzeMultipleFiles();
