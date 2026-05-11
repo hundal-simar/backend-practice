@@ -9,7 +9,7 @@ let users=[
 const server=http.createServer((req,res)=>{
     console.log(`[${req.method}] ${req.url}`)
     const {method,url}=req;
-
+     
     if(method==='GET' && url==='/users'){
         res.setHeader('Content-Type','application/json')
         res.statusCode=200
