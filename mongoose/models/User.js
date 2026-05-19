@@ -34,9 +34,9 @@ const userSchema= new mongoose.Schema({
     }
 )
 
-userSchema.pre('save', function(next){
+userSchema.pre('save', function(){
     this.email=this.email.toLowerCase().trim()
-    next()})
+    })
 
 userSchema.virtual('fullName').get(function(){
     return `${this.firstName} ${this.lastName}`
