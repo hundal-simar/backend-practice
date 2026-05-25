@@ -5,6 +5,9 @@ const userRoutes = require('./routes/userRoutes');
 const taskRoutes = require('./routes/taskRoute');
 const commentRoutes = require('./routes/commentRoute');
 const errorHandler = require('./middleware/errorHandler');
+const authRoutes = require('./routes/authRoutes');
+
+require('dotenv').config();
 
 mongoose.connect('mongodb://localhost:27017/', {
     dbName: 'taskmanager'
@@ -22,7 +25,7 @@ app.use('/users', userRoutes);
 app.use('/projects', projectRoutes);
 app.use('/tasks', taskRoutes);
 app.use('/comments', commentRoutes);
-
+app.use('/auth', authRoutes);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
