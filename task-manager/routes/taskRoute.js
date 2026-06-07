@@ -1,12 +1,16 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const Task = require('../models/Task');
+const isOwner = require('../middleware/isOwner');
+const isMember = require('../middleware/isMember');
+const protect = require('../middleware/protect');
+const restrictTo = require('../middleware/restrictTo');
 
 const router = express.Router();
 
 // create a task
 
-router.post('/', async (req, res)=>{
+router.post('/',protect, isMember, async (req, res)=>{
     try{
         const task= new Task(req.body)
         await task.save();
@@ -18,7 +22,7 @@ router.post('/', async (req, res)=>{
 
 // get all tasks
 
-router.get('/', async (req,res)=>{
+router.get('/',protect, async (req,res)=>{
     try{
         const {status, priority, project, search, sort, page=1, limit=5}= req.query
         let filter={};
@@ -48,7 +52,7 @@ router.get('/', async (req,res)=>{
 
 // get task by id
 
-router.get('/:id', async (req, res)=>{
+router.get('/:id',protect, async (req, res)=>{
     try{
         const task= await Task.findById(req.params.id)
         .populate('project', 'name')
@@ -61,7 +65,7 @@ router.get('/:id', async (req, res)=>{
 
 //update task by id
 
-router.put('/:id', async (req, res)=>{
+router.put('/:id',protect, isOwner, async (req, res)=>{
     try{
         const task= await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!task) {
@@ -75,7 +79,7 @@ router.put('/:id', async (req, res)=>{
 
 // delete task by id
 
-router.delete('/:id', async (req,res)=>{
+router.delete('/:id',protect, restrictTo('admin'), async (req,res)=>{
     try{
         const task= await Task.findByIdAndDelete(req.params.id);
         if (!task) {

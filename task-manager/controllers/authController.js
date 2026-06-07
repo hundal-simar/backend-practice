@@ -38,6 +38,7 @@ const login= async (req, res)=>{
         const refreshToken= generateRefreshToken(user._id);
         user.refreshToken= refreshToken;
         await user.save();
+        user.password= undefined;
         res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'Strict' });
         res.status(200).json({ user, accessToken });
     }catch (error) {

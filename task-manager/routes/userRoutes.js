@@ -1,6 +1,8 @@
 const express= require('express');
 const mongoose= require('mongoose');
 const User= require('../models/User');
+const protect = require('../middleware/protect');
+const restrictTo = require('../middleware/restrictTo');
 
 const router= express.Router();
 
@@ -18,7 +20,7 @@ router.post('/', async (req,res)=>{
 
 // get all users
 
-router.get('/', async (req,res)=>{
+router.get('/',protect, async (req,res)=>{
     try {
         const users= await User.find();
         res.status(200).json(users);  
@@ -29,7 +31,7 @@ router.get('/', async (req,res)=>{
 
 // get user by id
 
-router.get('/:id', async (req,res)=>{
+router.get('/:id',protect, async (req,res)=>{
     try {
         const user= await User.findById(req.params.id);
         if (!user) {
@@ -43,7 +45,7 @@ router.get('/:id', async (req,res)=>{
 
 // update user by id
 
-router.put('/:id', async (req,res)=>{
+router.put('/:id',protect, restrictTo('admin'), async (req,res)=>{
     try{
         const user= await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!user) {
